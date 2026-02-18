@@ -1,0 +1,42 @@
+﻿Scenario ID;US ID;Preconditions;Step #;Test Step;Test Data;Expected Result
+TS-01;US-01;Clear localStorage/sessionStorage | User not logged in | Start URL: https://demo.nopcommerce.com/;1;Open Register page;Header link: Register;Register page is displayed
+TS-01;US-01;Clear localStorage/sessionStorage | User not logged in | Start URL: https://demo.nopcommerce.com/;2;Fill required fields;"First name: QA; Last name: User; Email: qa+{timestamp}@mail.com; Password: Test12345!; Confirm: Test12345!";"Fields are accepted; no required field errors"
+TS-01;US-01;Clear localStorage/sessionStorage | User not logged in | Start URL: https://demo.nopcommerce.com/;3;Submit registration;Button: Register;"URL contains /registerresult; success message is visible"
+;;;;;;
+TS-02;US-02;Clear localStorage/sessionStorage | Existing user credentials available | Start URL: https://demo.nopcommerce.com/;1;Open Login page;Header link: Log in;Login page is displayed
+TS-02;US-02;Clear localStorage/sessionStorage | Existing user credentials available | Start URL: https://demo.nopcommerce.com/;2;Fill credentials;"Email: existing_user@mail.com; Password: Test12345!";Fields are accepted
+TS-02;US-02;Clear localStorage/sessionStorage | Existing user credentials available | Start URL: https://demo.nopcommerce.com/;3;Submit login;Button: Log in;My account and Log out are visible
+;;;;;;
+TS-03;US-03;Clear localStorage/sessionStorage | Start URL: https://demo.nopcommerce.com/;1;Search product;Search: Laptop;Matching product list is displayed
+TS-03;US-03;Clear localStorage/sessionStorage | Start URL: https://demo.nopcommerce.com/;2;Open product details;Product: 14.1-inch Laptop;Product details page is displayed
+TS-03;US-03;Clear localStorage/sessionStorage | Start URL: https://demo.nopcommerce.com/;3;Add to cart;Button: Add to cart;"Success notification is visible; cart count increases"
+;;;;;;
+TS-04;US-04;Clear localStorage/sessionStorage | Cart contains at least one item;1;Open cart;Header link: Shopping cart;Cart page is displayed
+TS-04;US-04;Clear localStorage/sessionStorage | Cart contains at least one item;2;Start checkout;"Terms checkbox: checked; Button: Checkout";Checkout flow starts
+TS-04;US-04;Clear localStorage/sessionStorage | Cart contains at least one item;3;Fill required checkout fields;"First: John; Last: Smith; Email: guest+{timestamp}@mail.com; Country: US; City: New York; Address: 1 Main St; Zip: 10001; Phone: 1234567890";Required fields are accepted
+TS-04;US-04;Clear localStorage/sessionStorage | Cart contains at least one item;4;Confirm order;Button: Confirm;Order success message is displayed
+;;;;;;
+TS-05;US-05;Clear localStorage/sessionStorage | Open category listing page;1;Open category listing;Category: Notebooks;Product listing is displayed
+TS-05;US-05;Clear localStorage/sessionStorage | Open category listing page;2;Apply sorting;Sort option: Price Low to High;Product order changes to ascending price
+TS-05;US-05;Clear localStorage/sessionStorage | Open category listing page;3;Verify selected sort;Sort dropdown value;Selected option remains visible
+;;;;;;
+TS-06;US-06;Clear localStorage/sessionStorage | Open category with price filter;1;Open listing;Category: Notebooks;Product listing is displayed
+TS-06;US-06;Clear localStorage/sessionStorage | Open category with price filter;2;Apply price range;Range: 500-1500;Displayed products match selected range
+TS-06;US-06;Clear localStorage/sessionStorage | Open category with price filter;3;Change filter;New range: 0-1000;Result list updates correctly
+;;;;;;
+TS-07;US-07;Clear localStorage/sessionStorage | Start URL: home page;1;Open product from listing;Product: 14.1-inch Laptop;Product detail page is displayed
+TS-07;US-07;Clear localStorage/sessionStorage | Start URL: home page;2;Verify key details;Name, price, short description;Product information is visible
+TS-07;US-07;Clear localStorage/sessionStorage | Start URL: home page;3;Verify purchase action;Button: Add to cart;Add to cart button is visible and enabled
+;;;;;;
+TS-08;US-08;Clear localStorage/sessionStorage | Start URL: home or category page;1;Open product details;Product: 14.1-inch Laptop;Product page is displayed
+TS-08;US-08;Clear localStorage/sessionStorage | Start URL: home or category page;2;Add to wishlist;Button: Add to wishlist;Success notification is displayed
+TS-08;US-08;Clear localStorage/sessionStorage | Start URL: home or category page;3;Open wishlist;Header link: Wishlist;Added product is visible
+TS-08;US-08;Clear localStorage/sessionStorage | Start URL: home or category page;4;Remove from wishlist;Remove checkbox + Update wishlist;Product is removed from wishlist
+;;;;;;
+TS-09;US-09;Clear localStorage/sessionStorage | Cart contains one product;1;Open cart page;Header link: Shopping cart;Cart page is displayed
+TS-09;US-09;Clear localStorage/sessionStorage | Cart contains one product;2;Change quantity;Quantity: 2;Quantity input is updated
+TS-09;US-09;Clear localStorage/sessionStorage | Cart contains one product;3;Apply update;Button: Update shopping cart;"Totals are recalculated; quantity stays 2"
+;;;;;;
+TS-10;US-10;Clear localStorage/sessionStorage | Open Register page;1;Submit empty form;Button: Register;Required field validation messages are displayed
+TS-10;US-10;Clear localStorage/sessionStorage | Open Register page;2;Enter invalid email;Email: qa-at-mail.com;Invalid email validation is displayed
+TS-10;US-10;Clear localStorage/sessionStorage | Open Register page;3;Correct invalid fields;Email: qa+{timestamp}@mail.com + required fields;"Validation messages disappear; form is submittable"
