@@ -1,3 +1,37 @@
 {
-  "baseUrl": "https://demo.nopcommerce.com/"
+  "baseUrl": "https://demo.nopcommerce.com/",
+  "users": {
+    "register": {
+      "gender": "Male",
+      "firstName": "John",
+      "lastName": "User",
+      "email": "john.user@mail.com",
+      "company": "Testers",
+      "password": "Password123!",
+      "confirmPassword": "Password123!"
+    },
+    "existing": {
+      "email": "example@ex.com",
+      "password": "Password123!"
+    },
+    "invalid": {
+      "email": "replace-with-existing-user@mail.com",
+      "password": "WrongPass123!"
+    }
+  },
+  "products": {
+    "searchKeyword": "Laptop",
+    "productName": "Asus Laptop"
+  },
+  "checkout": {
+    "firstName": "John",
+    "lastName": "Smith",
+    "email": "guest+{timestamp}@mail.com",
+    "country": "United States of America",
+    "city": "New York",
+    "state": "New York",
+    "address1": "1 Main St",
+    "zip": "10001",
+    "phone": "1234567890"
+  }
 }

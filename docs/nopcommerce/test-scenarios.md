@@ -35,11 +35,11 @@
 - Clear localStorage and sessionStorage
 - Start URL: https://demo.nopcommerce.com/
 
-| #   | Test Step            | Test Data                 | Expected Result                                       |
-| --- | -------------------- | ------------------------- | ----------------------------------------------------- |
-| 1   | Search product       | Search: Laptop            | Matching product list is displayed                    |
-| 2   | Open product details | Product: 14.1-inch Laptop | Product details page is displayed                     |
-| 3   | Add to cart          | Button: Add to cart       | Success notification is visible; cart count increases |
+| #   | Test Step            | Test Data            | Expected Result                                       |
+| --- | -------------------- | -------------------- | ----------------------------------------------------- |
+| 1   | Search product       | Search: Laptop       | Matching product list is displayed                    |
+| 2   | Open product details | Product: ASUS laptop | Product details page is displayed                     |
+| 3   | Add to cart          | Button: Add to cart  | Success notification is visible; cart count increases |
 
 ## TS-04 Complete Checkout (US-04)
 
@@ -68,18 +68,18 @@
 | 2   | Apply sorting         | Sort option: Price Low to High | Product order changes to ascending price |
 | 3   | Verify selected sort  | Sort dropdown value            | Selected option remains visible          |
 
-## TS-06 Filter Products By Price (US-06)
+## TS-06 Filter Products By CPU (US-06)
 
 **Preconditions**
 
 - Clear localStorage and sessionStorage
 - Open category with price filter
 
-| #   | Test Step         | Test Data           | Expected Result                         |
-| --- | ----------------- | ------------------- | --------------------------------------- |
-| 1   | Open listing      | Category: Notebooks | Product listing is displayed            |
-| 2   | Apply price range | Range: 500-1500     | Displayed products match selected range |
-| 3   | Change filter     | New range: 0-1000   | Result list updates correctly           |
+| #   | Test Step         | Test Data                              | Expected Result                                              |
+| --- | ----------------- | -------------------------------------- | ------------------------------------------------------------ |
+| 1   | Open listing      | Category: Notebooks                    | Product listing is displayed                                 |
+| 2   | Apply CPU filter  | CPU Type: Intel Core i5                | Product list updates and only i5-matching products are shown |
+| 3   | Change CPU filter | CPU Type: Intel Core i7 (i5 unchecked) | Product list updates and only i7-matching products are shown |
 
 ## TS-07 View Product Details (US-07)
 
@@ -90,7 +90,7 @@
 
 | #   | Test Step                 | Test Data                      | Expected Result                           |
 | --- | ------------------------- | ------------------------------ | ----------------------------------------- |
-| 1   | Open product from listing | Product: 14.1-inch Laptop      | Product detail page is displayed          |
+| 1   | Open product from listing | Product: Lenovo Laptop         | Product detail page is displayed          |
 | 2   | Verify key details        | Name, price, short description | Product information is visible            |
 | 3   | Verify purchase action    | Button: Add to cart            | Add to cart button is visible and enabled |
 
@@ -103,7 +103,7 @@
 
 | #   | Test Step            | Test Data                         | Expected Result                   |
 | --- | -------------------- | --------------------------------- | --------------------------------- |
-| 1   | Open product details | Product: 14.1-inch Laptop         | Product page is displayed         |
+| 1   | Open product details | Product: Asus notebook            | Product page is displayed         |
 | 2   | Add to wishlist      | Button: Add to wishlist           | Success notification is displayed |
 | 3   | Open wishlist        | Header link: Wishlist             | Added product is visible          |
 | 4   | Remove from wishlist | Remove checkbox + Update wishlist | Product is removed from wishlist  |
