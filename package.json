@@ -8,6 +8,8 @@
     "test:list": "playwright test --list",
     "test:pom": "playwright test tests/nopcommerce/TestPOM.spec.js",
     "test:pom:chromium": "playwright test tests/nopcommerce/TestPOM.spec.js --project=chromium",
+    "test:negative": "playwright test tests/nopcommerce/NegativePOM.spec.js",
+    "test:negative:chromium": "playwright test tests/nopcommerce/NegativePOM.spec.js --project=chromium",
     "report:html": "playwright test --reporter=html",
     "report:json": "playwright test --reporter=json > test-results/report.json",
     "report:open": "playwright show-report"

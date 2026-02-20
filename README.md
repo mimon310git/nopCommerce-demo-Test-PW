@@ -26,7 +26,8 @@ npx playwright install
 ## 3. Project Structure
 
 - `tests/nopcommerce/*.spec.js` - original scenario specs
-- `tests/nopcommerce/TestPOM.spec.js` - consolidated POM scenario suite (TS-01..TS-10)
+- `tests/nopcommerce/TestPOM.spec.js` - consolidated positive POM suite (TS-01..TS-10)
+- `tests/nopcommerce/NegativePOM.spec.js` - consolidated negative POM suite (NTS-01..NTS-08)
 - `tests/nopcommerce/pages/*.js` - page objects
 - `tests/nopcommerce/fixtures/testData.json` - test data
 - `docs/nopcommerce/*` - user stories and test scenarios
@@ -39,16 +40,28 @@ Run all tests:
 npm test
 ```
 
-Run only POM suite:
+Run only positive POM suite:
 
 ```bash
 npm run test:pom
 ```
 
-Run only POM suite on Chromium:
+Run only positive POM suite on Chromium:
 
 ```bash
 npm run test:pom:chromium
+```
+
+Run only negative POM suite:
+
+```bash
+npm run test:negative
+```
+
+Run only negative POM suite on Chromium:
+
+```bash
+npm run test:negative:chromium
 ```
 
 List discovered tests:
@@ -104,6 +117,6 @@ This keeps test runs repeatable in FE-only mode.
 ```bash
 npm test
 npm run test:pom
-npm run test:pom:chromium
+npm run test:negative
 npm run report:open
 ```

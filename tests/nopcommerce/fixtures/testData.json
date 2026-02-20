@@ -17,7 +17,8 @@
     "invalid": {
       "email": "replace-with-existing-user@mail.com",
       "password": "WrongPass123!",
-      "formatEmail": "qa-at-mail.com"
+      "formatEmail": "qa-at-mail.com",
+      "confirmPassword": "Password123?"
     }
   },
   "products": {
@@ -28,7 +29,9 @@
     "wishlistProductName": "Asus Laptop",
     "wishlistProductSlug": "asus-laptop",
     "cpuI5": "Intel Core i5",
-    "cpuI7": "Intel Core i7"
+    "cpuI7": "Intel Core i7",
+    "negativeProductName": "Virtual Gift Card",
+    "negativeProductSlug": "25-virtual-gift-card"
   },
   "checkout": {
     "firstName": "John",
@@ -42,3 +45,4 @@
     "phone": "1234567890"
   }
 }
+
