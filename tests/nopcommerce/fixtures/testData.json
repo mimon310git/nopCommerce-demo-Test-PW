@@ -16,12 +16,19 @@
     },
     "invalid": {
       "email": "replace-with-existing-user@mail.com",
-      "password": "WrongPass123!"
+      "password": "WrongPass123!",
+      "formatEmail": "qa-at-mail.com"
     }
   },
   "products": {
     "searchKeyword": "Laptop",
-    "productName": "Asus Laptop"
+    "productName": "Asus Laptop",
+    "detailsProductName": "Lenovo Thinkpad Carbon Laptop",
+    "detailsProductSlug": "lenovo-thinkpad-carbon-laptop",
+    "wishlistProductName": "Asus Laptop",
+    "wishlistProductSlug": "asus-laptop",
+    "cpuI5": "Intel Core i5",
+    "cpuI7": "Intel Core i7"
   },
   "checkout": {
     "firstName": "John",

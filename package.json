@@ -1,9 +1,17 @@
 {
   "name": "demo-full-test",
   "version": "1.0.0",
-  "description": "",
+  "description": "FE E2E tests for nopCommerce using Playwright and POM",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "playwright test",
+    "test:list": "playwright test --list",
+    "test:pom": "playwright test tests/nopcommerce/TestPOM.spec.js",
+    "test:pom:chromium": "playwright test tests/nopcommerce/TestPOM.spec.js --project=chromium",
+    "report:html": "playwright test --reporter=html",
+    "report:json": "playwright test --reporter=json > test-results/report.json",
+    "report:open": "playwright show-report"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
