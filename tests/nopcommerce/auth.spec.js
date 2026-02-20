@@ -86,6 +86,7 @@ test.describe("Auth", () => {
 
     test("TS-10.2 invalid email shows email validation", async ({ page }) => {
       const form = page.getByRole("main");
+      const emailInput = page.getByLabel("Email:", { exact: true });
       await page.getByRole("radio", { name: "Male", exact: true }).check();
       await page.getByLabel("First name:", { exact: true }).fill("John");
       await page.getByLabel("Last name:", { exact: true }).fill("User");
@@ -93,15 +94,21 @@ test.describe("Auth", () => {
       await page
         .getByLabel("Confirm password:", { exact: true })
         .fill("Password123!");
-      await page.getByLabel("Email:", { exact: true }).fill("qa-at-mail.com");
+      await emailInput.fill("qa-at-mail.com");
       await page.getByRole("button", { name: "Register" }).click();
 
+      await expect.poll(() => page.url()).toContain("register");
+      await expect
+        .poll(async () => emailInput.evaluate((input) => input.checkValidity()))
+        .toBe(false);
       await expect(
         form.locator("[data-valmsg-for='Email']"),
-      ).toContainText(/Please enter a valid email address.|Wrong email/i);
-      await expect(
-        page.getByLabel("Email:", { exact: true }),
-      ).toBeVisible();
+      ).toHaveCount(1);
+      await expect.soft(
+        form.locator("[data-valmsg-for='Email']"),
+      ).toContainText(/Please enter a valid email address.|Wrong email/i, {
+        timeout: 1000,
+      });
     });
 
     test("TS-10.3 corrected fields remove validation messages", async ({

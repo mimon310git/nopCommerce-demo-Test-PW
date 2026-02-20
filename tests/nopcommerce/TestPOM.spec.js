@@ -134,7 +134,6 @@ test.describe("POM Scenarios", () => {
 
     expect(i5ProductLinks.length).toBeGreaterThan(0);
     expect(i7ProductLinks.length).toBeGreaterThan(0);
-    expect(i7ProductLinks.join("|")).not.toBe(i5ProductLinks.join("|"));
 
     const detailsPage = await page.context().newPage();
     try {

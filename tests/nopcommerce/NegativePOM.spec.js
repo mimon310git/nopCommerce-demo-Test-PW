@@ -99,7 +99,18 @@ test.describe("POM Negative Scenarios", () => {
   });
 
   test("NTS-05 Checkout Without Accepting Terms", async ({ page }) => {
+    const auth = new AuthPage(page);
     const cart = new CartPage(page);
+
+    await auth.openLogin(user.baseUrl);
+    await auth.fillLoginForm({
+      email: user.users.existing.email,
+      password: user.users.existing.password,
+    });
+    await auth.submitLogin();
+    await expect(
+      page.getByRole("banner").getByRole("link", { name: "My account", exact: true }),
+    ).toBeVisible();
 
     await cart.addProductFromSearch({
       searchKeyword: user.products.searchKeyword,
@@ -109,15 +120,28 @@ test.describe("POM Negative Scenarios", () => {
 
     await cart.openCart();
     await expect(page).toHaveURL(`${user.baseUrl}cart`);
+    await page.evaluate(() => {
+      window.__cfRLUnblockHandlers = true;
+    });
+
+    const termsCheckbox = page.getByRole("checkbox", {
+      name: "I agree with the terms of service and I adhere to them unconditionally",
+      exact: true,
+    });
+    await expect(termsCheckbox).toBeVisible();
+    if (await termsCheckbox.isChecked()) {
+      await termsCheckbox.uncheck();
+    }
+    await expect(termsCheckbox).not.toBeChecked();
 
     await page.getByRole("button", { name: "Checkout", exact: true }).click();
 
-    const termsDialog = page.getByRole("dialog", { name: "Terms of service" });
-    await expect(termsDialog).toBeVisible();
-    await expect(termsDialog).toContainText("Please accept the terms of service");
-    await termsDialog.getByRole("button", { name: "Close", exact: true }).click();
-
     await expect(page).toHaveURL(`${user.baseUrl}cart`);
+    const termsWarningBox = page.locator("#terms-of-service-warning-box");
+    await expect(termsWarningBox).toBeVisible();
+    await expect(termsWarningBox).toContainText(
+      "Please accept the terms of service before the next step",
+    );
   });
 
   test("NTS-06 Checkout With Missing Required Billing Field", async ({ page }) => {

@@ -43,37 +43,44 @@ class CatalogPage {
   }
 
   async applyCpuFilter(cpuLabel) {
-    await this.page.goto(`${new URL(this.page.url()).origin}/notebooks`);
+    const origin = new URL(this.page.url()).origin;
+    await this.page.goto(`${origin}/notebooks`, {
+      waitUntil: "domcontentloaded",
+    });
 
-    const cpuCheckbox = this.page
-      .getByRole("complementary")
+    const sidebar = this.page.getByRole("complementary");
+    const cpuCheckbox = sidebar
       .getByRole("checkbox", { name: cpuLabel, exact: true })
       .first();
+    const cpuFilterText = sidebar.getByText(cpuLabel, { exact: true }).first();
 
     await expect(cpuCheckbox).toBeVisible();
+    await expect(cpuFilterText).toBeVisible();
+
     if (!(await cpuCheckbox.isChecked())) {
-      await cpuCheckbox.check();
+      await this.page.evaluate(() => {
+        window.__cfRLUnblockHandlers = true;
+      });
+      await Promise.all([
+        this.page.waitForURL(/\/notebooks\?.*specs=\d+/),
+        cpuFilterText.click(),
+      ]);
+    }
+
+    const specsValue = new URL(this.page.url()).searchParams.get("specs");
+    if (specsValue) {
+      await this.page.goto(`${origin}/notebooks?specs=${encodeURIComponent(specsValue)}`, {
+        waitUntil: "domcontentloaded",
+      });
     }
     await expect(cpuCheckbox).toBeChecked();
-    await this.page.waitForLoadState("networkidle");
 
-    const productCards = this.page.getByRole("article");
-    const count = await productCards.count();
-    const productLinks = [];
-
-    for (let i = 0; i < count; i++) {
-      const href = await productCards
-        .nth(i)
-        .getByRole("link")
-        .first()
-        .getAttribute("href");
-
-      if (href) {
-        productLinks.push(new URL(href, this.page.url()).toString());
-      }
-    }
-
-    return productLinks;
+    const productTitleLinks = this.page.locator("main .product-grid .item-box .product-title a");
+    await expect(productTitleLinks.first()).toBeVisible();
+    const links = await productTitleLinks.evaluateAll((elements) =>
+      elements.map((link) => link.href).filter(Boolean),
+    );
+    return [...new Set(links)];
   }
 
   async openProductByName(productName) {
@@ -97,8 +104,15 @@ class CatalogPage {
   }
 
   async goToWishlist(baseUrl) {
-    await this.page.goto(`${baseUrl}wishlist`);
-    await this.page.waitForLoadState("networkidle");
+    await expect(async () => {
+      await this.page.goto(`${baseUrl}wishlist`, {
+        waitUntil: "domcontentloaded",
+      });
+      await expect(this.page).toHaveURL(`${baseUrl}wishlist`);
+      await expect(
+        this.page.getByRole("heading", { name: "Wishlist", exact: true }),
+      ).toBeVisible();
+    }).toPass({ timeout: 20000 });
   }
 
   async ensureWishlistIsEmpty() {
@@ -117,7 +131,25 @@ class CatalogPage {
       }
 
       await removeButtons.first().click();
-      await this.page.waitForLoadState("networkidle");
+      const removedByButton = await expect
+        .poll(async () => {
+          const emptyVisible = await this.emptyWishlistMessage.isVisible().catch(() => false);
+          const hasRemoveButtons = (await removeButtons.count()) > 0;
+          return emptyVisible || !hasRemoveButtons;
+        })
+        .toBeTruthy()
+        .then(() => true)
+        .catch(() => false);
+
+      if (!removedByButton) {
+        const updateWishlistButton = this.page.getByRole("button", {
+          name: "Update wishlist",
+          exact: true,
+        });
+        if (await updateWishlistButton.isVisible().catch(() => false)) {
+          await updateWishlistButton.click({ timeout: 5000 });
+        }
+      }
     }
 
     await expect(this.emptyWishlistMessage).toBeVisible();
@@ -153,9 +185,41 @@ class CatalogPage {
 
   async removeProductFromWishlist(productName) {
     const row = this.getWishlistRowByProductName(productName);
+    const isRemovedOrEmpty = async () => {
+      const rowCount = await row.count();
+      const emptyVisible = await this.emptyWishlistMessage.isVisible().catch(() => false);
+      return rowCount === 0 || emptyVisible;
+    };
+
     await expect(row).toBeVisible();
+    await this.page.evaluate(() => {
+      window.__cfRLUnblockHandlers = true;
+    });
     await row.getByRole("button", { name: "Remove", exact: true }).click();
-    await expect(row).toHaveCount(0);
+
+    const removedByButton = await expect
+      .poll(isRemovedOrEmpty, { timeout: 10000 })
+      .toBeTruthy()
+      .then(() => true)
+      .catch(() => false);
+
+    if (!removedByButton) {
+      const updateWishlistButton = this.page.getByRole("button", {
+        name: "Update wishlist",
+        exact: true,
+      });
+      await expect(updateWishlistButton).toBeVisible();
+
+      await expect(async () => {
+        await this.page.evaluate(() => {
+          window.__cfRLUnblockHandlers = true;
+        });
+        await updateWishlistButton.click({ timeout: 5000 });
+        await expect.poll(isRemovedOrEmpty, { timeout: 10000 }).toBeTruthy();
+      }).toPass({ timeout: 20000 });
+    }
+
+    await expect.poll(isRemovedOrEmpty, { timeout: 10000 }).toBeTruthy();
     await expect(this.emptyWishlistMessage).toBeVisible();
   }
 }

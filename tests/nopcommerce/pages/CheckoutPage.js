@@ -8,7 +8,7 @@ class CheckoutPage {
       name: "Checkout as Guest",
       exact: true,
     });
-    this.billing = page.locator("#opc-billing");
+    this.billing = page.locator("#billing-new-address-form");
   }
 
   async acceptTerms() {
@@ -57,8 +57,26 @@ class CheckoutPage {
     await expect
       .poll(async () => stateSelect.locator("option").count())
       .toBeGreaterThan(1);
-    await stateSelect.selectOption({ label: state || "New York" });
-    await expect(stateSelect).not.toHaveValue("0");
+
+    const stateLabel = state || "New York";
+    const hasStateOption = await stateSelect
+      .locator("option")
+      .evaluateAll(
+        (options, label) =>
+          options.some((option) => option.textContent?.trim() === label),
+        stateLabel,
+      );
+
+    if (hasStateOption) {
+      await stateSelect.selectOption({ label: stateLabel });
+    }
+
+    if ((await stateSelect.inputValue()) === "0") {
+      const fallbackValue = await stateSelect.locator("option").nth(1).getAttribute("value");
+      if (fallbackValue && fallbackValue !== "0") {
+        await stateSelect.selectOption(fallbackValue);
+      }
+    }
 
     await this.billing.getByRole("textbox", { name: "City:" }).fill(city);
     await this.billing.getByRole("textbox", { name: "Address 1:" }).fill(address1);

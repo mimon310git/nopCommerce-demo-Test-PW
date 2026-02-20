@@ -15,9 +15,15 @@ class CartPage {
     await this.searchButton.click();
     await expect(this.page).toHaveURL(`${baseUrl}search?q=${searchKeyword}`);
 
-    await this.page
+    const productLink = this.page
+      .getByRole("main")
       .getByRole("link", { name: productName, exact: true })
-      .click();
+      .first();
+    await expect(productLink).toBeVisible();
+    const productHref = await productLink.getAttribute("href");
+    await expect(productHref).toBeTruthy();
+    await productLink.click();
+    await expect(this.page).toHaveURL(new URL(productHref, baseUrl).toString());
 
     await expect(
       this.page.getByRole("heading", {
@@ -31,7 +37,11 @@ class CartPage {
       await this.page.evaluate(() => {
         window.__cfRLUnblockHandlers = true;
       });
-      await this.page.locator("#add-to-cart-button-5").click();
+      await this.page
+        .getByRole("main")
+        .getByRole("button", { name: "Add to cart", exact: true })
+        .first()
+        .click();
 
       try {
         await expect(this.cartLink).not.toContainText("(0)", {
@@ -45,6 +55,23 @@ class CartPage {
   }
 
   async openCart() {
+    const barNotification = this.page.locator("#bar-notification");
+    if (await barNotification.isVisible().catch(() => false)) {
+      const cartLinkInNotification = barNotification.getByRole("link", {
+        name: /shopping cart/i,
+      });
+      if (await cartLinkInNotification.isVisible().catch(() => false)) {
+        await cartLinkInNotification.click();
+        return;
+      }
+
+      const closeNotification = barNotification.getByText("Close").first();
+      if (await closeNotification.isVisible().catch(() => false)) {
+        await closeNotification.click({ force: true });
+        await barNotification.waitFor({ state: "hidden", timeout: 5000 }).catch(() => {});
+      }
+    }
+
     await this.cartLink.click();
   }
 
