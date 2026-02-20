@@ -5,7 +5,9 @@ class CartPage {
     this.page = page;
     this.searchBox = page.getByRole("textbox", { name: "Search store" });
     this.searchButton = page.getByRole("button", { name: "Search" });
-    this.cartLink = page.getByRole("link", { name: /Shopping cart \(\d+\)/ });
+    this.cartLink = page
+      .getByRole("banner")
+      .getByRole("link", { name: "Shopping cart" });
   }
 
   async addProductFromSearch({ searchKeyword, productName, baseUrl }) {

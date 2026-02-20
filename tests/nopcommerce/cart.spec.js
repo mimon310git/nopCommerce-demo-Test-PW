@@ -29,7 +29,7 @@ test.describe("Cart", () => {
       });
   });
 
-  test.only("TS-09 Update Cart Quantity", async ({ page }) => {
+  test("TS-09 Update Cart Quantity", async ({ page }) => {
     const cart = new CartPage(page);
 
     await cart.addProductFromSearch({
@@ -39,12 +39,24 @@ test.describe("Cart", () => {
     });
 
     await cart.openCart();
-    await expect(page).toHaveURL(/\/cart$/);
+    await expect(page).toHaveURL(`${user.baseUrl}cart`);
 
-    const productRow = page.getByRole("row", {
-      name: new RegExp(user.products.productName, "i"),
+    const productRow = page.getByRole("row").filter({
+      has: page.getByRole("link", {
+        name: user.products.productName,
+        exact: true,
+      }),
     });
     await expect(productRow).toBeVisible();
+    const totalCell = productRow.getByRole("cell").nth(5);
+    const parseMoney = (text) =>
+      Number(((text || "").replace(/[^0-9.]/g, "").trim() || "NaN"));
+    const readSubtotal = async () => {
+      const text = (await totalCell.textContent()) || "";
+      return parseMoney(text);
+    };
+    const beforeSubtotal = await readSubtotal();
+    expect(beforeSubtotal).not.toBeNaN();
 
     let quantityInput = productRow.getByRole("spinbutton").first();
     if (!(await quantityInput.isVisible().catch(() => false))) {
@@ -52,10 +64,12 @@ test.describe("Cart", () => {
     }
 
     await expect(quantityInput).toBeVisible();
-    await quantityInput.fill("2");
+    const currentQty = Number(await quantityInput.inputValue());
+    const targetQty = String((Number.isNaN(currentQty) ? 1 : currentQty) + 1);
+    await quantityInput.fill(targetQty);
 
     const updateCartButton = page
-      .getByRole("button", { name: /update shopping cart/i })
+      .getByRole("button", { name: "Update shopping cart", exact: true })
       .first();
     if (await updateCartButton.isVisible().catch(() => false)) {
       await updateCartButton.click();
@@ -63,6 +77,7 @@ test.describe("Cart", () => {
       await quantityInput.press("Enter");
     }
 
-    await expect(quantityInput).toHaveValue("2");
+    await expect(quantityInput).toHaveValue(targetQty);
+    await expect.poll(readSubtotal).toBeGreaterThan(beforeSubtotal);
   });
 });

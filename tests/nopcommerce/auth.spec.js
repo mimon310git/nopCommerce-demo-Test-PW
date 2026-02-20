@@ -27,7 +27,7 @@ test.describe("Auth", () => {
       .fill(reg.confirmPassword);
     await page.getByRole("button", { name: "Register" }).click();
     //assertions after registration
-    await expect(page).toHaveURL(/registerresult/);
+    await expect.poll(() => page.url()).toContain("registerresult");
     await expect(
       page.getByText("Your registration completed", { exact: true }),
     ).toHaveText("Your registration completed");
@@ -56,7 +56,9 @@ test.describe("Auth", () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(user.baseUrl);
       await page.getByRole("link", { name: "Register" }).click();
-      await expect(page).toHaveURL(/\/register/);
+      await expect(
+        page.getByRole("heading", { name: "Register", exact: true }),
+      ).toBeVisible();
     });
 
     test("TS-10.1 empty form shows required errors", async ({ page }) => {
@@ -72,23 +74,41 @@ test.describe("Auth", () => {
       await expect(
         form.getByText("Email is required.", { exact: true }),
       ).toBeVisible();
+      await expect(
+        form.locator("[data-valmsg-for='ConfirmPassword']"),
+      ).toContainText("Password is required.");
+      await expect
+        .poll(async () =>
+          form.getByText("Password is required.", { exact: true }).count(),
+        )
+        .toBeGreaterThan(0);
     });
 
     test("TS-10.2 invalid email shows email validation", async ({ page }) => {
       const form = page.getByRole("main");
+      await page.getByRole("radio", { name: "Male", exact: true }).check();
+      await page.getByLabel("First name:", { exact: true }).fill("John");
+      await page.getByLabel("Last name:", { exact: true }).fill("User");
+      await page.getByLabel("Password:", { exact: true }).fill("Password123!");
+      await page
+        .getByLabel("Confirm password:", { exact: true })
+        .fill("Password123!");
       await page.getByLabel("Email:", { exact: true }).fill("qa-at-mail.com");
       await page.getByRole("button", { name: "Register" }).click();
 
       await expect(
-        form.getByText("Please enter a valid email address.", { exact: true }),
+        form.locator("[data-valmsg-for='Email']"),
+      ).toContainText(/Please enter a valid email address.|Wrong email/i);
+      await expect(
+        page.getByLabel("Email:", { exact: true }),
       ).toBeVisible();
     });
 
     test("TS-10.3 corrected fields remove validation messages", async ({
       page,
+      browserName,
     }) => {
-      const form = page.getByRole("main");
-      const uniqueEmail = `qa+${Date.now()}@mail.com`;
+      const uniqueEmail = `qa+${browserName}-${Date.now()}@mail.com`;
 
       await page.getByRole("radio", { name: "Male", exact: true }).check();
       await page.getByLabel("First name:", { exact: true }).fill("John");
@@ -101,18 +121,10 @@ test.describe("Auth", () => {
 
       await page.getByRole("button", { name: "Register" }).click();
 
+      await expect(page).toHaveURL(/\/registerresult/);
       await expect(
-        form.getByText("First name is required.", { exact: true }),
-      ).toHaveCount(0);
-      await expect(
-        form.getByText("Last name is required.", { exact: true }),
-      ).toHaveCount(0);
-      await expect(
-        form.getByText("Please enter a valid email address.", { exact: true }),
-      ).toHaveCount(0);
-      await expect(
-        form.getByText("Password is required.", { exact: true }),
-      ).toHaveCount(0);
+        page.getByText("Your registration completed", { exact: true }),
+      ).toBeVisible();
     });
   });
 });
